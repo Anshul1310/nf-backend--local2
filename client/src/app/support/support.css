@@ -1,0 +1,196 @@
+/* support.css */
+
+.support-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-image: linear-gradient(rgba(0, 45, 91, 0.7), rgba(0, 45, 91, 0.7)), url('/marvel-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Comic decorative elements */
+.support-container::before {
+    content: "BAM!";
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    font-family: var(--font-bangers);
+    font-size: 5rem;
+    color: var(--color-comic-yellow);
+    text-shadow: 3px 3px 0 var(--color-comic-black);
+    transform: rotate(-15deg);
+    opacity: 0.3;
+}
+
+.support-container::after {
+    content: "POW!";
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+    font-family: var(--font-bangers);
+    font-size: 4rem;
+    color: var(--color-comic-red);
+    text-shadow: 3px 3px 0 var(--color-comic-black);
+    transform: rotate(15deg);
+    opacity: 0.3;
+}
+
+.support-card {
+    background: white;
+    padding: 40px;
+    border: 4px solid var(--color-comic-black);
+    /* Hand-drawn irregular border look */
+    border-radius: 4px 10px 4px 12px / 12px 4px 10px 4px;
+    box-shadow: 10px 10px 0 var(--color-comic-black);
+    width: 100%;
+    max-width: 500px;
+    position: relative;
+    z-index: 10;
+}
+
+.title {
+    font-family: var(--font-bangers);
+    text-transform: uppercase;
+    color: var(--color-comic-red);
+    margin-bottom: 5px;
+    font-size: 3rem;
+    font-weight: 400;
+    text-align: center;
+    letter-spacing: -1px;
+    -webkit-text-stroke: 1.5px var(--color-comic-black);
+    text-shadow: 4px 4px 0px var(--color-comic-yellow);
+}
+
+.subtitle {
+    font-family: var(--font-bangers);
+    color: var(--color-comic-black);
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    font-weight: 400;
+    background: var(--color-comic-yellow);
+    display: inline-block;
+    width: 100%;
+    padding: 5px;
+    border: 2px solid var(--color-comic-black);
+    transform: rotate(-1deg);
+}
+
+.input-groups {
+    margin-bottom: 20px;
+}
+
+.input-groups label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-comic-black);
+    font-weight: 800;
+    font-size: 1.1rem;
+    font-family: var(--font-bangers);
+    text-transform: uppercase;
+}
+
+.input-groups input,
+.input-groups textarea {
+    width: 100%;
+    padding: 12px;
+    border: 4px solid var(--color-comic-black);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: var(--font-bangers);
+    background: #fdfdfd;
+    box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.input-groups input:focus,
+.input-groups textarea:focus {
+    outline: none;
+    background: #fff;
+    border-color: var(--color-comic-red);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--color-comic-red);
+    color: white;
+    border: 4px solid var(--color-comic-black);
+    border-radius: 4px;
+    font-size: 1.5rem;
+    font-family: var(--font-bangers);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    box-shadow: 6px 6px 0 var(--color-comic-black);
+    letter-spacing: 2px;
+}
+
+.submit-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 var(--color-comic-black);
+    background-color: #ff3c43;
+}
+
+.submit-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--color-comic-black);
+}
+
+.submit-btn:disabled {
+    background: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.message {
+    margin-top: 25px;
+    padding: 15px;
+    border: 4px solid var(--color-comic-black);
+    border-radius: 4px;
+    text-align: center;
+    font-family: var(--font-bangers);
+    font-weight: 700;
+    text-transform: uppercase;
+    position: relative;
+}
+
+/* Speech bubble tail for messages */
+.message::before {
+    content: "";
+    position: absolute;
+    top: -15px;
+    left: 20%;
+    border-width: 0 15px 15px 15px;
+    border-style: solid;
+    border-color: transparent transparent var(--color-comic-black) transparent;
+}
+
+.message.success {
+    background-color: #a7ffbc;
+    color: var(--color-comic-black);
+}
+
+.message.error {
+    background-color: #ffb8b8;
+    color: var(--color-comic-black);
+}
+
+@media (max-width: 600px) {
+    .title {
+        font-size: 2.2rem;
+    }
+
+    .support-container::before,
+    .support-container::after {
+        display: none;
+    }
+}

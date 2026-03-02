@@ -1,0 +1,157 @@
+/* privacy.css */
+
+.policy-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 60px 20px;
+    background-image: linear-gradient(rgba(0, 45, 91, 0.8), rgba(0, 45, 91, 0.8)), url('/marvel-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.policy-card {
+    background: #fdfdfd;
+    padding: 50px;
+    border: 4px solid var(--color-comic-black);
+    border-radius: 4px;
+    box-shadow: 15px 15px 0 var(--color-comic-black);
+    width: 100%;
+    max-width: 800px;
+    position: relative;
+    font-family: var(--font-bangers);
+}
+
+.back-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--color-comic-red);
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    font-family: var(--font-bangers);
+    border: 2px solid var(--color-comic-black);
+    box-shadow: 4px 4px 0 var(--color-comic-black);
+    font-size: 1.2rem;
+    transition: all 0.1s;
+}
+
+.back-link:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0 var(--color-comic-black);
+}
+
+.policy-title {
+    font-family: var(--font-bangers);
+    color: var(--color-comic-red);
+    font-size: 3.5rem;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1.2px var(--color-comic-black);
+    text-shadow: 4px 4px 0 var(--color-comic-yellow);
+}
+
+.classifed-stamp {
+    border: 5px solid rgba(17, 17, 17, 0.2);
+    color: rgba(17, 17, 17, 0.15);
+    font-size: 4rem;
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    pointer-events: none;
+    padding: 10px 30px;
+    font-family: sans-serif;
+    z-index: 1;
+}
+
+.policy-content {
+    position: relative;
+    z-index: 2;
+    color: var(--color-comic-black);
+    line-height: 1.6;
+}
+
+.update-date {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 30px;
+    background: var(--color-comic-yellow);
+    display: block;
+    padding: 5px;
+    border: 2px solid var(--color-comic-black);
+}
+
+.policy-content h2 {
+    color: var(--color-comic-red);
+    margin-top: 30px;
+    font-size: 1.8rem;
+    border-bottom: 3px solid var(--color-comic-black);
+    display: inline-block;
+}
+
+.comic-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.comic-list li {
+    padding-left: 25px;
+    position: relative;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.comic-list li::before {
+    content: "⚡";
+    position: absolute;
+    left: 0;
+    color: var(--color-comic-yellow);
+    -webkit-text-stroke: 1px var(--color-comic-black);
+}
+
+.note,
+.disclaimer {
+    background: #eee;
+    padding: 10px;
+    border-left: 10px solid var(--color-comic-yellow);
+    font-weight: 700;
+    margin: 20px 0;
+}
+
+.email-bubble {
+    background: var(--color-comic-red);
+    color: white;
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 3px solid var(--color-comic-black);
+    box-shadow: 5px 5px 0 var(--color-comic-black);
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .policy-title {
+        font-size: 2.2rem;
+    }
+
+    .policy-card {
+        padding: 30px 15px;
+    }
+
+    .back-link {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+        top: 0;
+        left: 0;
+    }
+}

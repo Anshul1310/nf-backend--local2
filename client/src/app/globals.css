@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --font-comic: var(--font-bangers), cursive;
+  --font-body: var(--font-roboto), sans-serif;
+
+  --color-comic-red: #D00000;
+  --color-comic-yellow: #FFD700;
+  --color-comic-blue: #00BFFF;
+  --color-comic-black: #000000;
+  --color-comic-white: #FFFFFF;
+
+  --shadow-comic: 4px 4px 0px 0px #000000;
+  --shadow-comic-lg: 8px 8px 0px 0px #000000;
+
+  --background-image-comic-pattern: radial-gradient(circle, transparent 20%, #000 20%, #000 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, #000 20%, #000 80%, transparent 80%, transparent);
+
+  --breakpoint-xs: 375px;
+}
+
+@utility text-shadow-comic {
+  text-shadow: 2px 2px 0 #000;
+}
+
+@layer base {
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Ensure images scale properly on all devices */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Smooth scrolling for better UX */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* Better touch targets for mobile */
+  @media (max-width: 640px) {
+
+    button,
+    a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+}
