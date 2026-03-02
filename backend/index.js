@@ -102,12 +102,12 @@ app.post("/auth/dauth/callback", async (req, res) => {
         // 4. Generate JWT for our app
         const appToken = jwt.sign(
             { userId: user._id, email: user.email },
-            process.env.JWT_SECRET || "fallback_secret_for_development",
+            process.env.JWT_SECRET || "secret",
             { expiresIn: "7d" }
         );
 
-        // 5. Send token and user info
-        res.json({ token: appToken, user: { email: user.email, name: user.name, gender: user.gender } });
+        // 5. Send token and the WHOLE user info object
+        res.json({ token: appToken, user: user });
 
     } catch (error) {
         console.error("DAuth callback error:", error?.response?.data || error.message);
