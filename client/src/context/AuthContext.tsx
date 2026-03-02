@@ -61,8 +61,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         const state = "xyz"; // Optional: Add state for CSRF protection
         const nonce = "12345"; // Optional: Add nonce
+        const scope = encodeURIComponent("email openid profile user");
 
-        const dauthUrl = `https://auth.delta.nitt.edu/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&grant_type=authorization_code&state=${state}&nonce=${nonce}`;
+        const dauthUrl = `https://auth.delta.nitt.edu/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+            redirectUri
+        )}&response_type=code&grant_type=authorization_code&state=${state}&scope=${scope}&nonce=${nonce}`;
 
         window.location.href = dauthUrl;
     };
