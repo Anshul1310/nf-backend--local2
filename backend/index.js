@@ -6,6 +6,7 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const { google } = require("googleapis");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -121,30 +122,11 @@ app.post("/payments/create-order", authMiddleware, async (req, res) => {
 
         const order = await razorpay.orders.create(options);
 
-        const createdOrder = await Order.create({
-            user: req.user._id,
-            size,
-            count: qty,
-            amount: amountPaise,
-            currency: "INR",
-            razorpayOrderId: order.id,
-            status: "created",
-            customerSnapshot: {
-                name: req.user.name,
-                email: req.user.email,
-                phoneNumber: req.user.phoneNumber,
-                batch: req.user.batch,
-                department: req.user.department,
-                gender: req.user.gender,
-            },
-        });
-
         res.json({
             orderId: order.id,
             amount: order.amount,
             currency: order.currency,
             razorpayKeyId: process.env.RAZORPAY_KEY_ID,
-            dbOrderId: createdOrder._id,
         });
     } catch (error) {
         console.error("Error creating Razorpay order:", error);
@@ -152,12 +134,69 @@ app.post("/payments/create-order", authMiddleware, async (req, res) => {
     }
 });
 
-// Verify payment and update order
+// Helper: append order to Google Sheet
+async function appendOrderToSheet(order) {
+    try {
+        const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+        const privateKey = process.env.GOOGLE_PRIVATE_KEY;
+        const sheetId = process.env.GOOGLE_SHEETS_ID;
+
+        if (!clientEmail || !privateKey || !sheetId) {
+            console.warn("Google Sheets env vars not set, skipping sheet append.");
+            return;
+        }
+
+        const jwtClient = new google.auth.JWT(
+            clientEmail,
+            undefined,
+            privateKey.replace(/\\n/g, "\n"),
+            ["https://www.googleapis.com/auth/spreadsheets"]
+        );
+
+        await jwtClient.authorize();
+
+        const sheets = google.sheets({ version: "v4", auth: jwtClient });
+
+        const values = [[
+            new Date(order.orderDate || order.createdAt || Date.now()).toISOString(),
+            order._id.toString(),
+            order.user.toString(),
+            order.customerSnapshot?.name || "",
+            order.customerSnapshot?.email || "",
+            order.customerSnapshot?.phoneNumber || "",
+            order.size,
+            order.count,
+            (order.amount / 100).toString(),
+            order.currency,
+            order.razorpayOrderId,
+            order.razorpayPaymentId || "",
+            order.status,
+        ]];
+
+        await sheets.spreadsheets.values.append({
+            spreadsheetId: sheetId,
+            range: "Sheet1!A:Z",
+            valueInputOption: "USER_ENTERED",
+            requestBody: { values },
+        });
+    } catch (err) {
+        console.error("Failed to append order to Google Sheet:", err.message);
+    }
+}
+
+// Verify payment and create order (only paid orders stored)
 app.post("/payments/verify", authMiddleware, async (req, res) => {
     try {
-        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, dbOrderId } = req.body;
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            size,
+            count,
+            amount,
+        } = req.body;
 
-        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !dbOrderId) {
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !size || !count || !amount) {
             return res.status(400).json({ error: "Missing payment details" });
         }
 
@@ -169,25 +208,37 @@ app.post("/payments/verify", authMiddleware, async (req, res) => {
 
         const isValid = expectedSignature === razorpay_signature;
 
-        const order = await Order.findById(dbOrderId);
-        if (!order) {
-            return res.status(404).json({ error: "Order not found" });
-        }
-
         if (!isValid) {
-            order.status = "failed";
-            order.razorpayPaymentId = razorpay_payment_id;
-            order.razorpaySignature = razorpay_signature;
-            await order.save();
             return res.status(400).json({ error: "Invalid payment signature" });
         }
 
-        order.status = "paid";
-        order.razorpayPaymentId = razorpay_payment_id;
-        order.razorpaySignature = razorpay_signature;
-        await order.save();
+        const qty = parseInt(count, 10) || 1;
 
-        res.json({ success: true, order });
+        const paidOrder = await Order.create({
+            user: req.user._id,
+            size,
+            count: qty,
+            amount,
+            currency: "INR",
+            razorpayOrderId: razorpay_order_id,
+            razorpayPaymentId: razorpay_payment_id,
+            razorpaySignature: razorpay_signature,
+            status: "paid",
+            customerSnapshot: {
+                name: req.user.name,
+                email: req.user.email,
+                phoneNumber: req.user.phoneNumber,
+                batch: req.user.batch,
+                department: req.user.department,
+                gender: req.user.gender,
+            },
+            orderDate: new Date(),
+        });
+
+        // fire-and-forget append to Google Sheets
+        appendOrderToSheet(paidOrder).catch(() => {});
+
+        res.json({ success: true, order: paidOrder });
     } catch (error) {
         console.error("Error verifying payment:", error);
         res.status(500).json({ error: "Payment verification failed" });
