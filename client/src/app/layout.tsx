@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { AuthProvider } from "@/context/AuthContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,14 +41,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body 
+      <body
         className={`${bangers.variable} ${roboto.variable} antialiased bg-comic-red`}
-        style={{ 
+        style={{
           '--font-bangers': bangers.style.fontFamily,
           '--font-roboto': roboto.style.fontFamily,
         } as React.CSSProperties}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
