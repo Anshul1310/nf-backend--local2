@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
@@ -32,6 +33,7 @@ function ShirtCard() {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [count, setCount] = useState<number>(1);
   const [isPaying, setIsPaying] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     // Load Razorpay script once
@@ -46,7 +48,7 @@ function ShirtCard() {
 
   const handleBuyNow = async () => {
     if (!user || !token) {
-      alert("Please login with DAuth before buying.");
+      setShowLoginModal(true);
       return;
     }
 
@@ -281,6 +283,59 @@ function ShirtCard() {
           </div>
         </div>
       )}
+
+      {showLoginModal && (
+        <div className="overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: "400px", padding: "32px", textAlign: "center" }}>
+            <button className="close-btn" onClick={() => setShowLoginModal(false)}>✕</button>
+            <h2 style={{ color: "#e00", fontSize: "42px", textShadow: "2px 2px 0 #000" }}>ACCESS DENIED!</h2>
+            <p style={{ fontFamily: "'Comic Neue',cursive", fontSize: "16px", color: "#333", marginBottom: "24px", fontWeight: "bold" }}>
+              Whoa there, hero! You need to log in to DAuth before you can snag this sweet NITTFEST loot.
+            </p>
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <span className="pow" style={{ fontSize: "16px", padding: "8px 16px", transform: "rotate(2deg)" }}>BOOM! 💥</span>
+            </div>
+            <button
+              onClick={() => {
+                setShowLoginModal(false);
+                login();
+              }}
+              style={{
+                fontFamily: "'Bangers',cursive",
+                fontSize: 22,
+                padding: "12px 24px",
+                borderRadius: 12,
+                border: "3px solid #000",
+                background: "#000",
+                color: "#FFE500",
+                boxShadow: "4px 4px 0 #555",
+                cursor: "pointer",
+                width: "100%",
+                letterSpacing: "2px",
+                transition: "all 0.1s"
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "translate(-2px, -2px)";
+                e.currentTarget.style.boxShadow = "6px 6px 0 #555";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "none";
+                e.currentTarget.style.boxShadow = "4px 4px 0 #555";
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = "translate(2px, 2px)";
+                e.currentTarget.style.boxShadow = "0px 0px 0 #555";
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = "translate(-2px, -2px)";
+                e.currentTarget.style.boxShadow = "6px 6px 0 #555";
+              }}
+            >
+              LOGIN WITH DAUTH
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -305,19 +360,10 @@ export default function MerchPage() {
         * { box-sizing: border-box; }
       `}</style>
 
-      <div
-        style={{
-          width: "100%",
-          marginBottom: 40,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 16,
-        }}
-      >
-        <div style={{ textAlign: "left" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: 16, marginBottom: 8 }}>
-            <img src="/logo.png" alt="NF Icon" style={{ width: 40, height: 40 }} />
+      <div className="w-full mb-10 flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-4">
+        <div className="text-center sm:text-left flex flex-col items-center sm:items-start w-full sm:w-auto">
+          <div className="flex items-center justify-center sm:justify-start gap-4 mb-2">
+            <img src="/logo.png" alt="NF Icon" className="w-10 h-10" />
             <h1 style={{
               fontFamily: "'Bangers',cursive",
               fontSize: 30,
@@ -343,30 +389,51 @@ export default function MerchPage() {
           }}>✦ MERCHANDISE ✦</div>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 12 }}>
+        <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-3 w-full sm:w-auto mt-4 sm:mt-0">
           {isLoading ? (
             <span style={{ fontFamily: "'Comic Neue',cursive", color: "#fff" }}>Checking login...</span>
           ) : user ? (
             <>
-              <span style={{ fontFamily: "'Comic Neue',cursive", color: "#fff", fontSize: 14 }}>
+              <span className="truncate max-w-[200px] sm:max-w-none px-2" style={{ fontFamily: "'Comic Neue',cursive", color: "#fff", fontSize: 14 }}>
                 Logged in as {user.name || user.email}
               </span>
-              <button
-                onClick={logout}
-                style={{
-                  fontFamily: "'Bangers',cursive",
-                  fontSize: 14,
-                  padding: "6px 14px",
-                  borderRadius: 999,
-                  border: "2px solid #000",
-                  background: "#FFE500",
-                  color: "#000",
-                  boxShadow: "3px 3px 0 #000",
-                  cursor: "pointer",
-                }}
-              >
-                LOG OUT
-              </button>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/orders"
+                  style={{
+                    fontFamily: "'Bangers',cursive",
+                    fontSize: 14,
+                    padding: "6px 14px",
+                    borderRadius: 999,
+                    border: "2px solid #000",
+                    background: "#fff",
+                    color: "#000",
+                    boxShadow: "3px 3px 0 #000",
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  ORDERS
+                </Link>
+                <button
+                  onClick={logout}
+                  style={{
+                    fontFamily: "'Bangers',cursive",
+                    fontSize: 14,
+                    padding: "6px 14px",
+                    borderRadius: 999,
+                    border: "2px solid #000",
+                    background: "#FFE500",
+                    color: "#000",
+                    boxShadow: "3px 3px 0 #000",
+                    cursor: "pointer",
+                  }}
+                  className="whitespace-nowrap"
+                >
+                  LOG OUT
+                </button>
+              </div>
             </>
           ) : (
             <button

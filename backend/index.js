@@ -245,6 +245,18 @@ app.post("/payments/verify", authMiddleware, async (req, res) => {
     }
 });
 
+// Get orders for logged-in user
+app.get("/orders/my", authMiddleware, async (req, res) => {
+    try {
+        const orders = await Order.find({ user: req.user._id })
+            .sort({ createdAt: -1 });
+        res.json({ orders });
+    } catch (error) {
+        console.error("Error fetching user orders:", error);
+        res.status(500).json({ error: "Failed to fetch orders" });
+    }
+});
+
 // DAuth Callback Route
 app.post("/auth/dauth/callback", async (req, res) => {
     try {
